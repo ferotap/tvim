@@ -29,7 +29,7 @@ return {
       end
 
       local lspconfig = require "lspconfig"
-      local server_config = require("et.config.lsp")
+      local server_config = require "et.config.lsp"
       local servers = server_config.servers
 
       local servers_to_install = vim.tbl_filter(function(key)
@@ -107,6 +107,9 @@ return {
       require("conform").setup {
         formatters_by_ft = {
           lua = { "stylua" },
+        },
+        {
+          java = {},
         },
       }
 
