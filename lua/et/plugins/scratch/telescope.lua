@@ -32,6 +32,10 @@ local function live_grep_git_root()
   end
 end
 
+if true then
+  return {}
+end
+
 vim.api.nvim_create_user_command("LiveGrepGitRoot", live_grep_git_root, {})
 
 return {

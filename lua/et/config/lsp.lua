@@ -12,6 +12,21 @@ M.servers = {
   },
   lemminx = true,
   lua_ls = {
+    runtime = {
+      version = 'LuaJIT'
+    },
+    diagnostics = {
+      globals = {
+        'vim'
+      },
+    },
+    workspace = {
+      library = {
+        [vim.fn.expand('$VIMRUNTIME/lua')] = true,
+        [vim.fn.stdpath('config')] = true,
+      },
+    },
+    telemetry = { enabled = false },
     server_capabilities = {
       semanticTokensProvider = vim.NIL,
     },
