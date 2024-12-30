@@ -72,14 +72,29 @@ return {
             settings = {}
           end
 
-          local builtin = require "telescope.builtin"
+          local fzf = require("fzf-lua")
+          local map = vim.keymap.set
 
           vim.opt_local.omnifunc = "v:lua.vim.lsp.omnifunc"
-          vim.keymap.set("n", "gd", builtin.lsp_definitions, { buffer = 0 })
-          vim.keymap.set("n", "gr", builtin.lsp_references, { buffer = 0 })
-          vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { buffer = 0 })
-          vim.keymap.set("n", "gT", vim.lsp.buf.type_definition, { buffer = 0 })
-          vim.keymap.set("n", "K", vim.lsp.buf.hover, { buffer = 0 })
+          map("n", "<leader>lr", function() fzf.lsp_references({}) end, {desc = "References (FZF)" })
+          map("n", "<leader>ld", function() fzf.lsp_definitions({}) end, {desc = "Definitions (FZF)" })
+          map("n", "<leader>lD", function() fzf.lsp_declarations({}) end, {desc = "Declarations (FZF)" })
+          map("n", "<leader>lt", function() fzf.lsp_typedefs({}) end, {desc = "Type Definitions (FZF)" })
+          map("n", "<leader>li", function() fzf.lsp_implementations({}) end, {desc = "Implementations (FZF)" })
+          map("n", "<leader>ld", function() fzf.lsp_document_symbols({}) end, {desc = "Document Symbols (FZF)" })
+          map("n", "<leader>lw", function() fzf.lsp_workspace_symbols({}) end, {desc = "Workspace Symbols (FZF)" })
+          map("n", "<leader>ll", function() fzf.lsp_live_workspace_symbols({}) end, {desc = "Workspace Symbols (live query) (FZF)" })
+          map("n", "<leader>li", function() fzf.lsp_incoming_calls({}) end, {desc = "Incoming Calls (FZF)" })
+          map("n", "<leader>lo", function() fzf.lsp_outgoing_calls({}) end, {desc = "Outgoing Calls (FZF)" })
+          map("n", "<leader>lc", function() fzf.lsp_code_actions({}) end, {desc = "Code Actions (FZF)" })
+          map("n", "<leader>lf", function() fzf.lsp_finder({}) end, {desc = "All LSP locations, combined view (FZF)" })
+          map("n", "<leader>lx", function() fzf.lsp_document_diagnostics({}) end, {desc = "diagnostics_document (FZF)" })
+          map("n", "<leader>lX", function() fzf.lsp_workspace_diagnostics({}) end, {desc = "diagnostics_workspace (FZF)" })
+
+
+          map("n", "gD", vim.lsp.buf.declaration, { buffer = 0 })
+          map("n", "gT", vim.lsp.buf.type_definition, { buffer = 0 })
+          map("n", "K", vim.lsp.buf.hover, { buffer = 0 })
 
           vim.keymap.set("n", "<space>cr", vim.lsp.buf.rename, { buffer = 0 })
           vim.keymap.set("n", "<space>ca", vim.lsp.buf.code_action, { buffer = 0 })

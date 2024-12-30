@@ -40,23 +40,7 @@ return {
         map("n", "<leader>tf", function() fzf.tags({}) end, { desc = "Search Project Tgs (FZF)" }),
         map("n", "<leader>tb", function() fzf.btags({}) end, { desc = "Search Buffer Tags (FZF)" }),
 
-        -- LSP
-
-        map("n", "<leader>lr", function() fzf.lsp_references({}) end, {desc = "References (FZF)" }),
-        map("n", "<leader>ld", function() fzf.lsp_definitions({}) end, {desc = "Definitions (FZF)" }),
-        map("n", "<leader>lD", function() fzf.lsp_declarations({}) end, {desc = "Declarations (FZF)" }),
-        map("n", "<leader>lt", function() fzf.lsp_typedefs({}) end, {desc = "Type Definitions (FZF)" }),
-        map("n", "<leader>li", function() fzf.lsp_implementations({}) end, {desc = "Implementations (FZF)" }),
-        map("n", "<leader>ld", function() fzf.lsp_document_symbols({}) end, {desc = "Document Symbols (FZF)" }),
-        map("n", "<leader>lw", function() fzf.lsp_workspace_symbols({}) end, {desc = "Workspace Symbols (FZF)" }),
-        map("n", "<leader>ll", function() fzf.lsp_live_workspace_symbols({}) end, {desc = "Workspace Symbols (live query) (FZF)" }),
-        map("n", "<leader>li", function() fzf.lsp_incoming_calls({}) end, {desc = "Incoming Calls (FZF)" }),
-        map("n", "<leader>lo", function() fzf.lsp_outgoing_calls({}) end, {desc = "Outgoing Calls (FZF)" }),
-        map("n", "<leader>lc", function() fzf.lsp_code_actions({}) end, {desc = "Code Actions (FZF)" }),
-        map("n", "<leader>lf", function() fzf.lsp_finder({}) end, {desc = "All LSP locations, combined view (FZF)" }),
-        map("n", "<leader>lx", function() fzf.lsp_document_diagnostics({}) end, {desc = "diagnostics_document (FZF)" }),
-        map("n", "<leader>lX", function() fzf.lsp_workspace_diagnostics({}) end, {desc = "diagnostics_workspace (FZF)" }),
-
+        -- --LSP mappings in plugins/lsp.lua
         -- misc
         map("n", "<leader>tb", function() fzf.tags({}) end, { desc = "Search Buffer Tags (FZF)" }),
       },
