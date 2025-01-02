@@ -16,15 +16,7 @@ return {
     statuscolumn = { enabled = true },
     words = { enabled = true },
   },
-  keys = {
-    {
-      "<leader>gg",
-      function()
-        Snacks.lazygit()
-      end,
-      desc = "Lazygit",
-    },
-  },
+  keys = {},
   init = function()
     vim.api.nvim_create_autocmd("User", {
       pattern = "VeryLazy",
@@ -52,6 +44,25 @@ return {
         Snacks.toggle.inlay_hints():map("<leader>uh")
         Snacks.toggle.indent():map("<leader>ug")
         Snacks.toggle.dim():map("<leader>uD")
+        -- lazygit
+        if vim.fn.executable("lazygit") == 1 then
+          local map = vim.keymap.set
+          map("n", "<leader>gg", function()
+            Snacks.lazygit({ cwd = Snacks.git.get_root() })
+          end, { desc = "LazyGit (Root Dir)" })
+          map("n", "<leader>gG", function()
+            Snacks.lazygit()
+          end, { Desc = "Lazygit (cwd)" })
+          map("n", "<leader>gf", function()
+            Snacks.lazygit.log_file()
+          end, { desc = "Lazygit Current File History" })
+          map("n", "<leader>gl", function()
+            Snacks.lazygit.log({ cwd = Snacks.git.get_root() })
+          end, { desc = "Lazygit Log" })
+          map("n", "<leader>gL", function()
+            Snacks.lazygit.log()
+          end, { desc = "Lazygit Log (cwd)" })
+        end
       end,
     })
   end,
