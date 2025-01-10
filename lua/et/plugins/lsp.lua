@@ -29,8 +29,55 @@ return {
       end
 
       local lspconfig = require("lspconfig")
-      local server_config = require("et.config.lsp")
-      local servers = server_config.servers
+      local servers = {
+        jdtls = true,
+        jsonls = {
+          settings = {
+            json = {
+              schemas = require("schemastore").json.schemas(),
+              validate = { enable = true },
+            },
+          },
+        },
+        lemminx = true,
+        lua_ls = {
+          runtime = {
+            version = "LuaJIT",
+          },
+          diagnostics = {
+            globals = {
+              "vim",
+            },
+          },
+          workspace = {
+            library = {
+              [vim.fn.expand("$VIMRUNTIME/lua")] = true,
+              [vim.fn.stdpath("config")] = true,
+            },
+          },
+          telemetry = { enabled = false },
+          server_capabilities = {
+            semanticTokensProvider = vim.NIL,
+          },
+        },
+        yamlls = {
+          settings = {
+            yaml = {
+              schemaStore = {
+                enable = false,
+                url = "",
+              },
+              schemas = require("schemastore").yaml.schemas(),
+            },
+          },
+        },
+      }
+
+      local ensure_installed = vim.tbl_keys(servers or {})
+      vim.list_extend(ensure_installed, {
+        "stylua", -- Used to format Lua code
+      })
+      require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
       local servers_to_install = vim.tbl_filter(function(key)
         local t = servers[key]
@@ -42,7 +89,6 @@ return {
       end, vim.tbl_keys(servers))
 
       require("mason").setup()
-      local ensure_installed = server_config.ensure_installed
 
       vim.list_extend(ensure_installed, servers_to_install)
       require("mason-tool-installer").setup({ ensure_installed = ensure_installed })

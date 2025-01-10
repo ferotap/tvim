@@ -52,7 +52,7 @@ return {
           end, { desc = "LazyGit (Root Dir)" })
           map("n", "<leader>gG", function()
             Snacks.lazygit()
-          end, { Desc = "Lazygit (cwd)" })
+          end, { desc = "Lazygit (cwd)" })
           map("n", "<leader>gf", function()
             Snacks.lazygit.log_file()
           end, { desc = "Lazygit Current File History" })

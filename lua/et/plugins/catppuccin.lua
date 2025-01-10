@@ -22,8 +22,10 @@ return {
       integrations = {
         aerial = true,
         alpha = true,
+        blink_cmp = true,
         dashboard = true,
         flash = true,
+        grug_far = true,
         headlines = true,
         illuminate = true,
         indent_blankline = { enabled = false },
