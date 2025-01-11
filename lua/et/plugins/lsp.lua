@@ -1,34 +1,106 @@
 return {
   {
+    -- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
+    -- used for completion, annotations and signatures of Neovim apis
+    "folke/lazydev.nvim",
+    ft = "lua",
+    opts = {
+      library = {
+        -- Load luvit types when the `vim.uv` word is found
+        { path = "luvit-meta/library", words = { "vim%.uv" } },
+      },
+    },
+  },
+  { "Bilal2453/luvit-meta", lazy = true },
+  {
     "neovim/nvim-lspconfig",
     dependencies = {
-      "folke/neodev.nvim",
-      "williamboman/mason.nvim",
+      { "williamboman/mason.nvim", opts = {} },
       "williamboman/mason-lspconfig.nvim",
       "WhoIsSethDaniel/mason-tool-installer.nvim",
 
-      { "j-hui/fidget.nvim", opts = {} },
+      { "j-hui/fidget.nvim", tag = "1.5.0", opts = {} },
 
       -- Autoformatting
       "stevearc/conform.nvim",
 
       -- Schema information
       "b0o/SchemaStore.nvim",
+      "saghen/blink.cmp",
     },
     config = function()
-      require("neodev").setup({
-        -- library = {
-        --   plugins = { "nvim-dap-ui" },
-        --   types = true,
-        -- },
+      vim.api.nvim_create_autocmd("LspAttach", {
+        group = vim.api.nvim_create_augroup('tvim-lsp-attach', { clear = true }),
+        callback = function(event)
+          local map = function(keys, func, desc, mode)
+            mode = mode or 'n'
+            vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
+          end
+
+          local fzf = require("fzf-lua")
+
+          vim.opt_local.omnifunc = "v:lua.vim.lsp.omnifunc"
+          map("<leader>cr", function() fzf.lsp_references({}) end, "Goto References")
+          map("<leader>cd", function() fzf.lsp_definitions({}) end, "Goto Definition")
+          map("<leader>cD", function() fzf.lsp_declarations({}) end, "Declarations")
+          map("<leader>ct", function() fzf.lsp_typedefs({}) end, "Type Definitions)")
+          map("<leader>ci", function() fzf.lsp_implementations({}) end,"Implementations")
+          map("<leader>ds", function() fzf.lsp_document_symbols({}) end, "Document Symbols")
+          map("<leader>ws", function() fzf.lsp_workspace_symbols({}) end, "Workspace Symbols")
+          map("<leader>cl", function() fzf.lsp_live_workspace_symbols({}) end, "Workspace Symbols (live))")
+          map("<leader>ci", function() fzf.lsp_incoming_calls({}) end, "Incoming Calls")
+          map("<leader>co", function() fzf.lsp_outgoing_calls({}) end, "Outgoing Calls")
+          map("<leader>cc", function() fzf.lsp_code_actions({}) end, "Code Actions")
+          map("<leader>cf", function() fzf.lsp_finder({}) end,  "All LSP locations, combined view")
+          map("<leader>cx", function() fzf.lsp_document_diagnostics({}) end, "diagnostics_document")
+          map("<leader>cX", function() fzf.lsp_workspace_diagnostics({}) end, "diagnostics_workspace")
+
+          map("gD", vim.lsp.buf.declaration, { buffer = 0 })
+          map("gT", vim.lsp.buf.type_definition, { buffer = 0 })
+          map("K", vim.lsp.buf.hover, { buffer = 0 })
+
+          vim.keymap.set("n", "<space>cr", vim.lsp.buf.rename, { buffer = 0 })
+          vim.keymap.set("n", "<space>ca", vim.lsp.buf.code_action, { buffer = 0 })
+
+          local client = vim.lsp.get_client_by_id(event.data.client_id)
+          if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
+            local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
+            vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
+              buffer = event.buf,
+              group = highlight_augroup,
+              callback = vim.lsp.buf.document_highlight,
+            })
+
+            vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
+              buffer = event.buf,
+              group = highlight_augroup,
+              callback = vim.lsp.buf.clear_references,
+            })
+
+            vim.api.nvim_create_autocmd('LspDetach', {
+              group = vim.api.nvim_create_augroup('kickstart-lsp-detach', { clear = true }),
+              callback = function(event2)
+                vim.lsp.buf.clear_references()
+                vim.api.nvim_clear_autocmds { group = 'kickstart-lsp-highlight', buffer = event2.buf }
+              end,
+            })
+          end
+
+          -- The following code creates a keymap to toggle inlay hints in your
+          -- code, if the language server you are using supports them
+          --
+          -- This may be unwanted, since they displace some of your code
+          if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
+            map('<leader>th', function()
+              vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
+            end, '[T]oggle Inlay [H]ints')
+          end
+        end,
       })
 
-      local capabilities = nil
-      if pcall(require, "cmp_nvim_lsp") then
-        capabilities = require("cmp_nvim_lsp").default_capabilities()
-      end
+      local capabilities = vim.lsp.protocol.make_client_capabilities()
+      capabilities = vim.tbl_deep_extend("force", capabilities, require("blink-cmp").capabilities())
 
-      local lspconfig = require("lspconfig")
       local servers = {
         jdtls = true,
         jsonls = {
@@ -56,9 +128,6 @@ return {
             },
           },
           telemetry = { enabled = false },
-          server_capabilities = {
-            semanticTokensProvider = vim.NIL,
-          },
         },
         yamlls = {
           settings = {
@@ -77,119 +146,21 @@ return {
       vim.list_extend(ensure_installed, {
         "stylua", -- Used to format Lua code
       })
+
       require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
-      local servers_to_install = vim.tbl_filter(function(key)
-        local t = servers[key]
-        if type(t) == "table" then
-          return not t.manual_install
-        else
-          return t
-        end
-      end, vim.tbl_keys(servers))
-
-      require("mason").setup()
-
-      vim.list_extend(ensure_installed, servers_to_install)
-      require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
-
-      for name, config in pairs(servers) do
-        if config == true then
-          config = {}
-        end
-        config = vim.tbl_deep_extend("force", {}, {
-          capabilities = capabilities,
-        }, config)
-
-        lspconfig[name].setup(config)
-      end
-
-      local disable_semantic_tokens = {
-        lua = true,
+      require('mason-lspconfig').setup {
+        handlers = {
+          function(server_name)
+            local server = servers[server_name] or {}
+            -- This handles overriding only values explicitly passed
+            -- by the server configuration above. Useful when disabling
+            -- certain features of an LSP (for example, turning off formatting for ts_ls)
+            server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
+            require('lspconfig')[server_name].setup(server)
+          end,
+        },
       }
-
-      vim.api.nvim_create_autocmd("LspAttach", {
-        callback = function(args)
-          local bufnr = args.buf
-          local client = assert(vim.lsp.get_client_by_id(args.data.client_id), "must have valid client")
-
-          local settings = servers[client.name]
-          if type(settings) ~= "table" then
-            settings = {}
-          end
-
-          local fzf = require("fzf-lua")
-          local map = vim.keymap.set
-
-          vim.opt_local.omnifunc = "v:lua.vim.lsp.omnifunc"
-          map("n", "<leader>cr", function()
-            fzf.lsp_references({})
-          end, { desc = "References (FZF)" })
-          map("n", "<leader>cd", function()
-            fzf.lsp_definitions({})
-          end, { desc = "Definitions (FZF)" })
-          map("n", "<leader>cD", function()
-            fzf.lsp_declarations({})
-          end, { desc = "Declarations (FZF)" })
-          map("n", "<leader>ct", function()
-            fzf.lsp_typedefs({})
-          end, { desc = "Type Definitions (FZF)" })
-          map("n", "<leader>ci", function()
-            fzf.lsp_implementations({})
-          end, { desc = "Implementations (FZF)" })
-          map("n", "<leader>cd", function()
-            fzf.lsp_document_symbols({})
-          end, { desc = "Document Symbols (FZF)" })
-          map("n", "<leader>cw", function()
-            fzf.lsp_workspace_symbols({})
-          end, { desc = "Workspace Symbols (FZF)" })
-          map("n", "<leader>cl", function()
-            fzf.lsp_live_workspace_symbols({})
-          end, { desc = "Workspace Symbols (live query) (FZF)" })
-          map("n", "<leader>ci", function()
-            fzf.lsp_incoming_calls({})
-          end, { desc = "Incoming Calls (FZF)" })
-          map("n", "<leader>co", function()
-            fzf.lsp_outgoing_calls({})
-          end, { desc = "Outgoing Calls (FZF)" })
-          map("n", "<leader>cc", function()
-            fzf.lsp_code_actions({})
-          end, { desc = "Code Actions (FZF)" })
-          map("n", "<leader>cf", function()
-            fzf.lsp_finder({})
-          end, { desc = "All LSP locations, combined view (FZF)" })
-          map("n", "<leader>cx", function()
-            fzf.lsp_document_diagnostics({})
-          end, { desc = "diagnostics_document (FZF)" })
-          map("n", "<leader>cX", function()
-            fzf.lsp_workspace_diagnostics({})
-          end, { desc = "diagnostics_workspace (FZF)" })
-
-          map("n", "gD", vim.lsp.buf.declaration, { buffer = 0 })
-          map("n", "gT", vim.lsp.buf.type_definition, { buffer = 0 })
-          map("n", "K", vim.lsp.buf.hover, { buffer = 0 })
-
-          vim.keymap.set("n", "<space>cr", vim.lsp.buf.rename, { buffer = 0 })
-          vim.keymap.set("n", "<space>ca", vim.lsp.buf.code_action, { buffer = 0 })
-
-          local filetype = vim.bo[bufnr].filetype
-          if disable_semantic_tokens[filetype] then
-            client.server_capabilities.semanticTokensProvider = nil
-          end
-
-          -- Override server capabilities
-          if settings.server_capabilities then
-            for k, v in pairs(settings.server_capabilities) do
-              if v == vim.NIL then
-                ---@diagnostic disable-next-line: cast-local-type
-                v = nil
-              end
-
-              client.server_capabilities[k] = v
-            end
-          end
-        end,
-      })
 
       -- Autoformatting Setup
       require("conform").setup({
@@ -201,15 +172,15 @@ return {
         },
       })
 
-      vim.api.nvim_create_autocmd("BufWritePre", {
-        callback = function(args)
-          require("conform").format({
-            bufnr = args.buf,
-            lsp_fallback = true,
-            quiet = true,
-          })
-        end,
-      })
+      -- vim.api.nvim_create_autocmd("BufWritePre", {
+      --   callback = function(args)
+      --     require("conform").format({
+      --       bufnr = args.buf,
+      --       lsp_fallback = true,
+      --       quiet = true,
+      --     })
+      --   end,
+      -- })
     end,
   },
 }

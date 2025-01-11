@@ -1,5 +1,6 @@
 return {
   "saghen/blink.cmp",
+  event = "InsertEnter",
   version = "v0.*",
   -- !Important! Make sure you're using the latest release of LuaSnip
   -- `main` does not work at the moment
