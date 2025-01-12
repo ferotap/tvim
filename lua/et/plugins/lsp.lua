@@ -20,7 +20,7 @@ return {
       "williamboman/mason-lspconfig.nvim",
       "WhoIsSethDaniel/mason-tool-installer.nvim",
 
-      { "j-hui/fidget.nvim", tag = "1.5.0", opts = {} },
+      { "j-hui/fidget.nvim", opts = {} },
 
       -- Autoformatting
       "stevearc/conform.nvim",
@@ -33,9 +33,10 @@ return {
       vim.api.nvim_create_autocmd("LspAttach", {
         group = vim.api.nvim_create_augroup('tvim-lsp-attach', { clear = true }),
         callback = function(event)
-          local map = function(keys, func, desc, mode)
+          local map = function(keys, func, description, mode)
             mode = mode or 'n'
-            vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
+            description = description or 'N/A'
+            vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = 'LSP: ' .. description})
           end
 
           local fzf = require("fzf-lua")
@@ -44,11 +45,11 @@ return {
           map("<leader>cr", function() fzf.lsp_references({}) end, "Goto References")
           map("<leader>cd", function() fzf.lsp_definitions({}) end, "Goto Definition")
           map("<leader>cD", function() fzf.lsp_declarations({}) end, "Declarations")
-          map("<leader>ct", function() fzf.lsp_typedefs({}) end, "Type Definitions)")
+          map("<leader>ct", function() fzf.lsp_typedefs({}) end, "Type Definitions")
           map("<leader>ci", function() fzf.lsp_implementations({}) end,"Implementations")
           map("<leader>ds", function() fzf.lsp_document_symbols({}) end, "Document Symbols")
           map("<leader>ws", function() fzf.lsp_workspace_symbols({}) end, "Workspace Symbols")
-          map("<leader>cl", function() fzf.lsp_live_workspace_symbols({}) end, "Workspace Symbols (live))")
+          map("<leader>cl", function() fzf.lsp_live_workspace_symbols({}) end, "Workspace Symbols (live)")
           map("<leader>ci", function() fzf.lsp_incoming_calls({}) end, "Incoming Calls")
           map("<leader>co", function() fzf.lsp_outgoing_calls({}) end, "Outgoing Calls")
           map("<leader>cc", function() fzf.lsp_code_actions({}) end, "Code Actions")
@@ -56,16 +57,16 @@ return {
           map("<leader>cx", function() fzf.lsp_document_diagnostics({}) end, "diagnostics_document")
           map("<leader>cX", function() fzf.lsp_workspace_diagnostics({}) end, "diagnostics_workspace")
 
-          map("gD", vim.lsp.buf.declaration, { buffer = 0 })
-          map("gT", vim.lsp.buf.type_definition, { buffer = 0 })
-          map("K", vim.lsp.buf.hover, { buffer = 0 })
-
-          vim.keymap.set("n", "<space>cr", vim.lsp.buf.rename, { buffer = 0 })
-          vim.keymap.set("n", "<space>ca", vim.lsp.buf.code_action, { buffer = 0 })
+          -- map("gD", vim.lsp.buf.declaration, { buffer = 0 })
+          -- map("gT", vim.lsp.buf.type_definition, { buffer = 0 })
+          -- map("K", vim.lsp.buf.hover, { buffer = 0 })
+          --
+          -- vim.keymap.set("n", "<space>cr", vim.lsp.buf.rename, { buffer = 0 })
+          -- vim.keymap.set("n", "<space>ca", vim.lsp.buf.code_action, { buffer = 0 })
 
           local client = vim.lsp.get_client_by_id(event.data.client_id)
           if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
-            local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
+            local highlight_augroup = vim.api.nvim_create_augroup('tvim-lsp-highlight', { clear = false })
             vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
               buffer = event.buf,
               group = highlight_augroup,
@@ -79,10 +80,10 @@ return {
             })
 
             vim.api.nvim_create_autocmd('LspDetach', {
-              group = vim.api.nvim_create_augroup('kickstart-lsp-detach', { clear = true }),
+              group = vim.api.nvim_create_augroup('tvim-lsp-detach', { clear = true }),
               callback = function(event2)
                 vim.lsp.buf.clear_references()
-                vim.api.nvim_clear_autocmds { group = 'kickstart-lsp-highlight', buffer = event2.buf }
+                vim.api.nvim_clear_autocmds { group = 'tvim-lsp-highlight', buffer = event2.buf }
               end,
             })
           end
@@ -100,7 +101,7 @@ return {
       })
 
       local servers = {
-        jdtls = true,
+        jdtls = {},
         jsonls = {
           settings = {
             json = {
@@ -109,7 +110,7 @@ return {
             },
           },
         },
-        lemminx = true,
+        lemminx = {},
         lua_ls = {
           runtime = {
             version = "LuaJIT",
@@ -127,17 +128,17 @@ return {
           },
           telemetry = { enabled = false },
         },
-        yamlls = {
-          settings = {
-            yaml = {
-              schemaStore = {
-                enable = false,
-                url = "",
-              },
-              schemas = require("schemastore").yaml.schemas(),
-            },
-          },
-        },
+        -- yamlls = {
+        --   settings = {
+        --     yaml = {
+        --       schemaStore = {
+        --         enable = false,
+        --         url = "",
+        --       },
+        --       schemas = require("schemastore").yaml.schemas(),
+        --     },
+        --   },
+        -- },
       }
       local capabilities = vim.lsp.protocol.make_client_capabilities()
       capabilities = vim.tbl_deep_extend("force", capabilities, require("blink.cmp").get_lsp_capabilities())
@@ -152,6 +153,8 @@ return {
 
 
       require('mason-lspconfig').setup {
+        ensure_installed = ensure_installed,
+        automatic_installation = true,
         handlers = {
           function(server_name)
             local server = servers[server_name] or {}
