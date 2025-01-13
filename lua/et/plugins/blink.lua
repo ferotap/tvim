@@ -11,6 +11,7 @@ return {
       nerd_font_variant = "mono",
     },
     snippets = {
+      preset = 'luasnip',
       expand = function(snippet)
         require("luasnip").lsp_expand(snippet)
       end,
@@ -25,7 +26,7 @@ return {
       end,
     },
     sources = {
-      default = { "lsp", "path", "luasnip", "buffer" },
+      default = { "lsp", "path", "snippets", "buffer" },
     },
   },
 }
