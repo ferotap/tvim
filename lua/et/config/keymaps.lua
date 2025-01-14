@@ -5,7 +5,7 @@ map("i", "jk", "<Esc>", { desc = "Return to normal mode" })
 map("n", "<leader>w", "<cmd>w<cr>", { desc = "Save buffer" })
 
 -- lua execution
-map("n", "<space><spece>x", "<cmd>source %<CR>")
+map("n", "<space><space>x", "<cmd>source %<CR>")
 map("n", "<space>x", ":.lua<CR>")
 map("v", "<space>x", ":lua<CR>")
 -- Stay in indent mode
@@ -15,7 +15,9 @@ map("v", ">", ">gv", { desc = "indent right" })
 map("x", "p", [["_dP]], { desc = "don't delete to clipboard" })
 
 -- lazy
-map("n", "<leader>l", "<cmd>Lazy<cr>", { desc = "Lazy" })
+map("n", "<leader>L", "<cmd>Lazy<cr>", { desc = "Lazy" })
+-- Mason
+map("n", "<leader>M", "<cmd>Mason<cr>", { desc = "Mason" })
 
 -- better up/down
 map({ "n", "x" }, "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
