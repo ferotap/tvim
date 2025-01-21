@@ -23,8 +23,8 @@ return {
 
     -- search
     map("n", "<leader>sg", function() require("fzf-lua").live_grep({}) end, { desc = "Live Grep (FZF)" }),
-    map("n", "<leader>sG", function() require("fzf-lua").live_grep({}) end, { desc = "Live Grep --glob (FZF)" }),
-    map("n", "<leader>sr", function() require("fzf-lua").live_grep_resume({}) end,
+    map("n", "<leader>sG", function() require("fzf-lua").live_grep_glob({}) end, { desc = "Live Grep --iglob(FZF)" }),
+    map("n", "<leader>sr", function() require("fzf-lua").resume({}) end,
       { desc = "Resume Search Pattern (FZF)" }),
     map("n", "<leader>sw", function() require("fzf-lua").cword({}) end, { desc = "Search Word Under Cursor (FZF)" }),
     map("n", "<leader>sW", function() require("fzf-lua").cWORD({}) end, { desc = "Search WORD Under Cursor (FZF)" }),
