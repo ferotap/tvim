@@ -1,11 +1,14 @@
 local map = vim.keymap.set
 return {
   "ibhagwan/fzf-lua",
+  -- commit = "86d8ee3dee6539dad1af07cdfb482ef7ceb0a96c",
+  -- pin = true,
   dependencies = { "nvim-tree/nvim-web-devicons" },
   keys = {
     -- buffers and files
     map("n", "<leader>fb", function() require("fzf-lua").buffers({}) end, { desc = "Buffers (FZF)" }),
     map("n", "<leader>ff", function() require("fzf-lua").files({}) end, { desc = "Files  (FZF)" }),
+    map("n", "<leader>fg", function() require("fzf-lua").git_files({}) end, { desc = "git git_files  (FZF)" }),
     map("n", "<leader>fo", function() require("fzf-lua").oldfiles({}) end, { desc = "Recent Files (FZF)" }),
     map("n", "<leader>fc", function() require("fzf-lua").quickfix({}) end, { desc = "Quickfix List (FZF)" }),
     map("n", "<leader>fC", function() require("fzf-lua").quickfix_stack({}) end, { desc = "Quickfix Stack (FZF)" }),
@@ -24,7 +27,7 @@ return {
     -- search
     map("n", "<leader>sg", function() require("fzf-lua").live_grep({}) end, { desc = "Live Grep (FZF)" }),
     map("n", "<leader>sG", function() require("fzf-lua").live_grep_glob({}) end, { desc = "Live Grep --iglob(FZF)" }),
-    map("n", "<leader>sr", function() require("fzf-lua").resume({}) end,
+    map("n", "<leader>sR", function() require("fzf-lua").resume({}) end,
       { desc = "Resume Search Pattern (FZF)" }),
     map("n", "<leader>sw", function() require("fzf-lua").cword({}) end, { desc = "Search Word Under Cursor (FZF)" }),
     map("n", "<leader>sW", function() require("fzf-lua").cWORD({}) end, { desc = "Search WORD Under Cursor (FZF)" }),
@@ -41,6 +44,9 @@ return {
     map("n", "<leader>tb", function() require("fzf-lua").tags({}) end, { desc = "Search Buffer Tags (FZF)" }),
   },
   opts = {
+    winopts = {
+      layout = "vertical",
+    },
     files = {
       cwd_prompt = false,
     },

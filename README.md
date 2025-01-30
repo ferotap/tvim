@@ -1,4 +1,4 @@
 # Neovim configuration
 
-Neovim confiugarion based on lazy package manager.
+Neovim configuration based on lazy package manager.
 

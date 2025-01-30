@@ -3,6 +3,7 @@ local map = vim.keymap.set
 
 map("i", "jk", "<Esc>", { desc = "Return to normal mode" })
 map("n", "<leader>w", "<cmd>w<cr>", { desc = "Save buffer" })
+map("n", "<leader>W", "<cmd>wa<cr>", { desc = "Save buffer" })
 
 -- lua execution
 map("n", "<space><space>x", "<cmd>source %<CR>")
@@ -14,8 +15,11 @@ map("v", ">", ">gv", { desc = "indent right" })
 
 map("x", "p", [["_dP]], { desc = "don't delete to clipboard" })
 
+--  set keyboard layout
+map("n", "<space>keu", "<CMD>!setxkbmap eu<CR>", {desc = "set keyboard mapping to 'EU'"})
+map("n", "<space>kfi", "<CMD>!setxkbmap fi<CR>", {desc = "set keyboard mapping to 'FI'"})
 -- lazy
-map("n", "<leader>L", "<cmd>Lazy<cr>", { desc = "Lazy" })
+map("n", "<leader>l", "<cmd>Lazy<cr>", { desc = "Lazy" })
 -- Mason
 map("n", "<leader>M", "<cmd>Mason<cr>", { desc = "Mason" })
 

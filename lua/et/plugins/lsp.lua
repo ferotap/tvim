@@ -101,7 +101,7 @@ return {
       })
 
       local servers = {
-        jdtls = {},
+        -- java is setup in 'java.lua'jdtls = {},
         jsonls = {
           settings = {
             json = {
