@@ -50,7 +50,7 @@ return {
           tree_sitter,
         },
       },
-      extensions = { "neo-tree", "lazy" },
+      extensions = { "neo-tree", "lazy", "fzf" },
     }
   end,
 }
