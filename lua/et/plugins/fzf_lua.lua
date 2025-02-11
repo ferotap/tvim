@@ -3,7 +3,7 @@ return {
   "ibhagwan/fzf-lua",
   -- commit = "86d8ee3dee6539dad1af07cdfb482ef7ceb0a96c",
   -- pin = true,
-  dependencies = { "nvim-tree/nvim-web-devicons" },
+  dependencies = { "echasnovski/mini.icons" },
   keys = {
     -- buffers and files
     map("n", "<leader>fb", function() require("fzf-lua").buffers({ sort_mru = true, sort_lastused = true }) end,
