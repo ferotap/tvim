@@ -10,13 +10,18 @@ return {
       { desc = "Buffers (FZF)" }),
     map("n", "<leader>ff", function() require("fzf-lua").files({}) end, { desc = "Files  (FZF, root)" }),
     map("n", "<leader>fF", function() require("fzf-lua").files({}) end, { desc = "Files  (FZF, cwd)" }),
-    map("n", "<leader>fg", function() require("fzf-lua").git_files({}) end, { desc = "git git_files  (FZF)" }),
+    map("n", "<leader>fga", function() require("fzf-lua").git_files({}) end, { desc = "git git_files  (FZF)" }),
+    map("n", "<leader>fgc", function()
+      require("fzf-lua").grep({raw_cmd =
+        [[git status -su | rg "^\s*M" | cut -d ' ' -f3 | xargs rg --hidden --column --line-number --no-heading --color=always  --with-filename -e '']]
+      })
+    end, { desc = "changed gitfiles  (FZF)" }),
     map("n", "<leader>fr", function() require("fzf-lua").oldfiles({}) end, { desc = "Recent Files (FZF)" }),
     map("n", "<leader>fc", function() require("fzf-lua").quickfix({}) end, { desc = "Quickfix List (FZF)" }),
     map("n", "<leader>fC", function() require("fzf-lua").quickfix_stack({}) end, { desc = "Quickfix Stack (FZF)" }),
     map("n", "<leader>fl", function() require("fzf-lua").loclist({}) end, { desc = "Loclist List (FZF)" }),
     map("n", "<leader>fL", function() require("fzf-lua").loclist_stack({}) end, { desc = "Loclist Stack (FZF)" }),
-    map("n", "<leader>ft", function() require("fzf-lua").treesitter({}) end, { desc = "Treesitter Symbols(FZF)" }),
+    map("n", "<leader>fs", function() require("fzf-lua").treesitter({}) end, { desc = "Treesitter Symbols(FZF)" }),
 
     -- git
     map("n", "<leader>gc", function() require("fzf-lua").git_commits({}) end, { desc = "git commit log (project) (FZF)" }),
@@ -49,6 +54,14 @@ return {
     local fzf = require("fzf-lua")
     local config = fzf.config
     local actions = fzf.actions
+    config.defaults.keymap.fzf["ctrl-q"] = "select-all+accept"
+    config.defaults.keymap.fzf["ctrl-u"] = "half-page-up"
+    config.defaults.keymap.fzf["ctrl-d"] = "half-page-down"
+    config.defaults.keymap.fzf["ctrl-x"] = "jump"
+    config.defaults.keymap.fzf["ctrl-f"] = "preview-page-down"
+    config.defaults.keymap.fzf["ctrl-b"] = "preview-page-up"
+    config.defaults.keymap.builtin["<c-f>"] = "preview-page-down"
+    config.defaults.keymap.builtin["<c-b>"] = "preview-page-up"
     return {
       defaults = {
         formatter = "path.filename_first",
@@ -95,7 +108,7 @@ return {
         rg_glob = true,
         rg_glob_fn = function(query, opts)
           local regex, flags = query:match("^(.-)%s%-%-(.*)$")
-        -- If no separator is detected will return the original query
+          -- If no separator is detected will return the original query
           return (regex or query), flags
         end
       }

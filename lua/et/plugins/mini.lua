@@ -2,7 +2,8 @@ return {
   -- icons
   {
     "echasnovski/mini.icons",
-    lazy = true,
+    -- lazy = true,
+    priority = 1000,
     opts = {
       file = {
         [".keep"] = { glyph = "󰊢", hl = "MiniIconsGrey" },

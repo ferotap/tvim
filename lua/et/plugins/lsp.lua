@@ -54,10 +54,20 @@ return {
           map("<leader>ci", function() fzf.lsp_incoming_calls({}) end, "Incoming Calls")
           map("<leader>co", function() fzf.lsp_outgoing_calls({}) end, "Outgoing Calls")
           map("<leader>cc", function() fzf.lsp_code_actions({}) end, "Code Actions")
-          map("<leader>cf", function() fzf.lsp_finder({}) end,  "All LSP locations, combined view")
+          map("<leader>cF", function() fzf.lsp_finder({}) end,  "All LSP locations, combined view")
           map("<leader>cx", function() fzf.lsp_document_diagnostics({}) end, "diagnostics_document")
           map("<leader>cX", function() fzf.lsp_workspace_diagnostics({}) end, "diagnostics_workspace")
 
+          -- DAP
+          map("<leader>Dc", function() fzf.dap_commands() end, "DAP builtin commands")
+          map("<leader>DC", function() fzf.dap_configurations() end, "DAP configurations")
+          map("<leader>Db", function() fzf.dap_breakpoints() end, "DAP breakpoints")
+          map("<leader>Dv", function() fzf.dap_variables() end, "DAP active session variables")
+          map("<leader>Df", function() fzf.dap_frames() end, "DAP active session jump to frame")
+
+
+          -- Formatting
+          map("<leader>cf", function() vim.lsp.buf.format({}) end,  "(LSP) Format")
           -- map("gD", vim.lsp.buf.declaration, { buffer = 0 })
           -- map("gT", vim.lsp.buf.type_definition, { buffer = 0 })
           -- map("K", vim.lsp.buf.hover, { buffer = 0 })

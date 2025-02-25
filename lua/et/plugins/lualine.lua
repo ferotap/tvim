@@ -4,7 +4,7 @@ end
 
 local tree_sitter = {
   cond = treesitter_active(),
-  icon = require("echasnovski/mini.icons").get_icon_by_filetype(".bashrc", {}),
+  -- icon = MiniIcons.mock_nvim_web_devicons.get_icon_by_filetype(".bashrc", {}),
 }
 
 return {
@@ -34,7 +34,11 @@ return {
             "diagnostics",
           },
           lualine_c = {
-            "filename",
+            {
+              "filename",
+              file_status = true,
+              path = 1,
+            },
           },
           lualine_x = {
             {
@@ -51,7 +55,10 @@ return {
             { "location", padding = { left = 0, right = 1 } },
           },
           lualine_z = {
-            tree_sitter,
+            -- tree_sitter,
+            function()
+              return " " .. os.date("%R")
+            end,
           },
         },
         extensions = { "neo-tree", "lazy", "fzf" },
