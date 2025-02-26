@@ -28,6 +28,7 @@ return {
     map("n", "<leader>sm", function() require("fzf-lua").manpages({}) end, { desc = "Man pages (FZF)" }),
     map("n", "<leader>sh", function() require("fzf-lua").help_tags({}) end, { desc = "Man pages (FZF)" }),
     map("n", "<leader>sk", function() require("fzf-lua").keymaps({}) end, { desc = "Key mappings (FZF)" }),
+    map("n", '<leader>s"', "<cmd>FzfLua registers<cr>", { desc = "Registers" } ),
 
     -- tags
     map("n", "<leader>tf", function() require("fzf-lua").tags({}) end, { desc = "Search Project Tgs (FZF)" }),
