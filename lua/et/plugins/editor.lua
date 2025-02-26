@@ -256,6 +256,10 @@ return {
   {
     "lewis6991/gitsigns.nvim",
     opts = function() return {} end,
+    keys = {
+      { "<leader>gsp", "<cmd>Gitsigns preview_hunk<cr>", desc = "Preview hunk(Gitsigns)"},
+      { "<leader>gst", "<cmd>Gitsigns toggle_current_line_blame<cr>", desc = "Toggle inline blame(Gitsigns)"},
+    },
   },
   -- better diagnostics list and others
   {
