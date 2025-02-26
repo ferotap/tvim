@@ -16,6 +16,9 @@ return {
   { "Bilal2453/luvit-meta", lazy = true },
   {
     "neovim/nvim-lspconfig",
+    opts = {
+       inlay_hints = { enabled = true },
+    },
     dependencies = {
       "williamboman/mason.nvim",
       "williamboman/mason-lspconfig.nvim",

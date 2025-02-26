@@ -10,12 +10,6 @@ return {
       { desc = "Buffers (FZF)" }),
     map("n", "<leader>ff", function() require("fzf-lua").files({}) end, { desc = "Files  (FZF, root)" }),
     map("n", "<leader>fF", function() require("fzf-lua").files({}) end, { desc = "Files  (FZF, cwd)" }),
-    map("n", "<leader>fga", function() require("fzf-lua").git_files({}) end, { desc = "git git_files  (FZF)" }),
-    map("n", "<leader>fgc", function()
-      require("fzf-lua").grep({raw_cmd =
-        [[git status -su | rg "^\s*M" | cut -d ' ' -f3 | xargs rg --hidden --column --line-number --no-heading --color=always  --with-filename -e '']]
-      })
-    end, { desc = "changed gitfiles  (FZF)" }),
     map("n", "<leader>fr", function() require("fzf-lua").oldfiles({}) end, { desc = "Recent Files (FZF)" }),
     map("n", "<leader>fc", function() require("fzf-lua").quickfix({}) end, { desc = "Quickfix List (FZF)" }),
     map("n", "<leader>fC", function() require("fzf-lua").quickfix_stack({}) end, { desc = "Quickfix Stack (FZF)" }),
@@ -23,14 +17,7 @@ return {
     map("n", "<leader>fL", function() require("fzf-lua").loclist_stack({}) end, { desc = "Loclist Stack (FZF)" }),
     map("n", "<leader>fs", function() require("fzf-lua").treesitter({}) end, { desc = "Treesitter Symbols(FZF)" }),
 
-    -- git
-    map("n", "<leader>gc", function() require("fzf-lua").git_commits({}) end, { desc = "git commit log (project) (FZF)" }),
-    map("n", "<leader>gC", function() require("fzf-lua").git_bcommits({}) end, { desc = "git commit log (buffer) (FZF)" }),
-    map("n", "<leader>gf", function() require("fzf-lua").ls_files({}) end, { desc = "git ls-files (FZF)" }),
-    map("n", "<leader>gs", function() require("fzf-lua").git_status({}) end, { desc = "git status (FZF)" }),
-    map("n", "<leader>gb", function() require("fzf-lua").git_blame({}) end, { desc = "git blame (FZF)" }),
-    map("n", "<leader>gt", function() require("fzf-lua").git_tags({}) end, { desc = "git tags (FZF)" }),
-
+    -- fzf-lua git mappings in git.lua
     -- search
     map("n", "<leader>sg", function() require("fzf-lua").live_grep({}) end, { desc = "Live Grep (FZF)" }),
     map("n", "<leader>sG", function() require("fzf-lua").live_grep_glob({}) end, { desc = "Live Grep --iglob(FZF)" }),
