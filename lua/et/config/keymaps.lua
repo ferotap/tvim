@@ -6,9 +6,9 @@ map("n", "<leader>w", "<cmd>w<cr>", { desc = "Save buffer" })
 map("n", "<leader>W", "<cmd>wa<cr>", { desc = "Save buffer" })
 
 -- lua execution
-map("n", "<space><space>x", "<cmd>source %<CR>")
-map("n", "<space>x", ":.lua<CR>")
-map("v", "<space>x", ":lua<CR>")
+map("n", "<space><space>x", "<cmd>source %<CR>", { desc = "Source current file"})
+map("n", "<space><space>X", ":.lua<CR>", { desc = "Source current file"})
+map("v", "<space><space>X", ":lua<CR>", { desc = "Source current file"})
 -- Stay in indent mode
 map("v", "<", "<gv", { desc = "indent left" })
 map("v", ">", ">gv", { desc = "indent right" })

@@ -38,7 +38,7 @@ return {
     -- misc
     map("n", "<leader>tb", function() require("fzf-lua").tags({}) end, { desc = "Search Buffer Tags (FZF)" }),
   },
-  opts = function(_, opts)
+  opts = function()
     local fzf = require("fzf-lua")
     local config = fzf.config
     local actions = fzf.actions
