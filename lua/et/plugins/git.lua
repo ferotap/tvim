@@ -10,14 +10,14 @@ return {
 
       -- putting fzf-lua mappings here to avoid overlappings in the mappins
       local fzf = require("fzf-lua")
-      map("n", "<leader>gfc", function() fzf.git_commits({}) end, { desc = "git commit log (project) (FZF)" })
-      map("n", "<leader>gfC", function() fzf.git_bcommits({}) end, { desc = "git commit log (buffer) (FZF)" })
-      map("n", "<leader>gff", function() fzf.ls_files({}) end, { desc = "git ls-files (FZF)" })
-      map("n", "<leader>gfs", function() fzf.git_status({}) end, { desc = "git status (FZF)" })
-      map("n", "<leader>gfb", function() fzf.git_blame({}) end, { desc = "git blame (FZF)" })
-      map("n", "<leader>gft", function() fzf.git_tags({}) end, { desc = "git tags (FZF)" })
-      map("n", "<leader>gfl", function() fzf.git_files({}) end, { desc = "git git_files  (FZF)" })
-      map("n", "<leader>gfL", function()
+      map("n", "<leader>gc", function() fzf.git_commits({}) end, { desc = "git commit log (project) (FZF)" })
+      map("n", "<leader>gC", function() fzf.git_bcommits({}) end, { desc = "git commit log (buffer) (FZF)" })
+      map("n", "<leader>gf", function() fzf.ls_files({}) end, { desc = "git ls-files (FZF)" })
+      map("n", "<leader>gs", function() fzf.git_status({}) end, { desc = "git status (FZF)" })
+      map("n", "<leader>gb", function() fzf.git_blame({}) end, { desc = "git blame (FZF)" })
+      map("n", "<leader>gt", function() fzf.git_tags({}) end, { desc = "git tags (FZF)" })
+      map("n", "<leader>gl", function() fzf.git_files({}) end, { desc = "git git_files  (FZF)" })
+      map("n", "<leader>gL", function()
         fzf.grep({raw_cmd =
           [[git status -su | rg "^\s*M" | cut -d ' ' -f3 | xargs rg --hidden --column --line-number --no-heading --color=always  --with-filename -e '']]
         })
