@@ -82,6 +82,10 @@ return {
           ["l"] = "open",
           ["h"] = "close_node",
           ["<space>"] = "none",
+          ["u"] = "close_all_subnodes",
+          ["U"] = "expand_all_subnodes",
+          ["z"] = "close_all_nodes",
+          ["Z"] = "expand_all_nodes",
           ["Y"] = {
             function(state)
               local node = state.tree:get_node()
@@ -96,7 +100,7 @@ return {
             end,
             desc = "Open with System Application",
           },
-          ["P"] = { "toggle_preview", config = { use_float = false } },
+          ["P"] = { "toggle_preview", config = { use_float = true } },
         },
       },
       default_component_configs = {
@@ -122,7 +126,7 @@ return {
       local events = require("neo-tree.events")
       opts.event_handlers = opts.event_handlers or {}
       vim.list_extend(opts.event_handlers, {
-        { event = events.FILE_MOVED, handler = on_move },
+        { event = events.FILE_MOVED,   handler = on_move },
         { event = events.FILE_RENAMED, handler = on_move },
       })
       require("neo-tree").setup(opts)
