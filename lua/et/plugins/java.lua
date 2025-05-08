@@ -12,6 +12,7 @@ return {
       "mfussenegger/nvim-dap",
       {
         "williamboman/mason.nvim",
+        version = "1.11.0", -- workaround for mason 2.0 compatibilit problem
         opts = {
           registries = {
             "github:nvim-java/mason-registry",
@@ -21,6 +22,8 @@ return {
       },
       {
         "williamboman/mason-lspconfig.nvim",
+        version = "1.32.0", -- workaround for mason 2.0 compatibilit problem
+
         opts = {
           handlers = {
             ["jdtls"] = function()
