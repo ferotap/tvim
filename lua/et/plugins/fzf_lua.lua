@@ -8,8 +8,8 @@ return {
     -- buffers and files
     map("n", "<leader>fb", function() require("fzf-lua").buffers({ sort_mru = true, sort_lastused = true }) end,
       { desc = "Buffers (FZF)" }),
-    map("n", "<leader>ff", function() require("fzf-lua").files({}) end, { desc = "Files  (FZF, root)" }),
-    map("n", "<leader>fF", function() require("fzf-lua").files({}) end, { desc = "Files  (FZF, cwd)" }),
+    map("n", "<leader>ff", function() require("fzf-lua").files({}) end, { desc = "Files  (FZF, cwd)" }),
+    map("n", "<leader>fF", function() require("fzf-lua").files({cwd = Snacks.git.get_root()}) end, { desc = "Files  (FZF, git root)" }),
     map("n", "<leader>fr", function() require("fzf-lua").oldfiles({}) end, { desc = "Recent Files (FZF)" }),
     map("n", "<leader>fc", function() require("fzf-lua").quickfix({}) end, { desc = "Quickfix List (FZF)" }),
     map("n", "<leader>fC", function() require("fzf-lua").quickfix_stack({}) end, { desc = "Quickfix Stack (FZF)" }),
