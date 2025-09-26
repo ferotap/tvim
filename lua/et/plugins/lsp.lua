@@ -15,12 +15,12 @@ return {
   },
   { "Bilal2453/luvit-meta", lazy = true },
   {
-    "neovim/nvim-lspconfig",
+    "williamboman/mason.nvim",
+    -- "neovim/nvim-lspconfig",
     opts = {
        inlay_hints = { enabled = true },
     },
     dependencies = {
-      "williamboman/mason.nvim",
       "williamboman/mason-lspconfig.nvim",
       "WhoIsSethDaniel/mason-tool-installer.nvim",
 
@@ -79,7 +79,7 @@ return {
           -- vim.keymap.set("n", "<space>ca", vim.lsp.buf.code_action, { buffer = 0 })
 
           local client = vim.lsp.get_client_by_id(event.data.client_id)
-          if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
+          if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
             local highlight_augroup = vim.api.nvim_create_augroup('tvim-lsp-highlight', { clear = false })
             vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
               buffer = event.buf,
@@ -106,7 +106,7 @@ return {
           -- code, if the language server you are using supports them
           --
           -- This may be unwanted, since they displace some of your code
-          if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
+          if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
             map('<leader>th', function()
               vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
             end, '[T]oggle Inlay [H]ints')
@@ -115,71 +115,48 @@ return {
       })
 
       local servers = {
-        -- java is setup in 'java.lua'jdtls = {},
+        bashls = {},
         jdtls = {},
-        jsonls = {
-          settings = {
-            json = {
-              schemas = require("schemastore").json.schemas(),
-              validate = { enable = true },
-            },
-          },
-        },
+        jsonls = {},
         lemminx = {},
-        lua_ls = {
-          runtime = {
-            version = "LuaJIT",
-          },
-          diagnostics = {
-            globals = {
-              "vim",
-            },
-          },
-          workspace = {
-            library = {
-              [vim.fn.expand("$VIMRUNTIME/lua")] = true,
-              [vim.fn.stdpath("config")] = true,
-            },
-          },
-          telemetry = { enabled = false },
-        },
-        -- yamlls = {
-        --   settings = {
-        --     yaml = {
-        --       schemaStore = {
-        --         enable = false,
-        --         url = "",
-        --       },
-        --       schemas = require("schemastore").yaml.schemas(),
-        --     },
-        --   },
-        -- },
+        lua_ls = {},
+        yamlls = {}
       }
+
       local capabilities = vim.lsp.protocol.make_client_capabilities()
       capabilities = vim.tbl_deep_extend("force", capabilities, require("blink.cmp").get_lsp_capabilities())
 
       require('mason').setup()
       local ensure_installed = vim.tbl_keys(servers or {})
-      vim.list_extend(ensure_installed, {
-        "stylua", -- Used to format Lua code
-      })
+      -- vim.list_extend(ensure_installed, {
+      --   "stylua", -- Used to format Lua code
+      -- })
 
-      require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
+      require("mason-tool-installer").setup({
+        ensure_installed = {
+          "java-debug-adapter",
+          "java-test",
+          "stylua",
+        }
+      })
 
 
       require('mason-lspconfig').setup {
-        ensure_installed = {},
+        ensure_installed = ensure_installed,
         automatic_installation = true,
-        handlers = {
-          function(server_name)
-            local server = servers[server_name] or {}
-            -- This handles overriding only values explicitly passed
-            -- by the server configuration above. Useful when disabling
-            -- certain features of an LSP (for example, turning off formatting for ts_ls)
-            server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-            require('lspconfig')[server_name].setup(server)
-          end,
-        },
+        -- handlers = {
+        --   function(server_name)
+            -- jdtls is setup in ftplugin/java.lua
+            -- if server_name ~= 'jdtls' then
+            --   local server = servers[server_name] or {}
+              -- This handles overriding only values explicitly passed
+              -- by the server configuration above. Useful when disabling
+              -- certain features of an LSP (for example, turning off formatting for ts_ls)
+        --       server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
+        --       require('lspconfig')[server_name].setup(server)
+        --     end
+        --   end
+        -- },
       }
 
       -- Autoformatting Setup

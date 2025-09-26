@@ -1,9 +1,11 @@
--- JDTLS (Java LSP) configuration
 local home = vim.env.HOME -- Get the home directory
-
+local java_home = vim.env.JAVA_HOME
+local nvim_appname = vim.env.NVIM_APPNAME or "nvim"
+local java_filetypes = { "java" }
 local jdtls = require("jdtls")
 local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")
-local workspace_dir = home .. "/jdtls-workspace/" .. project_name
+local workspace_dir = home .. "/.local/jdtls-workspace/" .. project_name
+local myvim = require("et.util.myvim")
 
 local system_os = ""
 
@@ -21,16 +23,17 @@ end
 
 -- Needed for debugging
 local bundles = {
-  vim.fn.glob(home .. "/.local/share/nvim/mason/share/java-debug-adapter/com.microsoft.java.debug.plugin.jar"),
+  vim.fn.glob(home ..
+  "/.local/share/" .. nvim_appname .. "/mason/share/java-debug-adapter/com.microsoft.java.debug.plugin.jar"),
 }
 
--- Needed for running/debugging unit tests
-vim.list_extend(bundles, vim.split(vim.fn.glob(home .. "/.local/share/nvim/mason/share/java-test/*.jar", true), "\n"))
+vim.list_extend(bundles,
+  vim.split(vim.fn.glob(home .. "/.local/share/" .. nvim_appname .. "/mason/share/java-test/*.jar", true), "\n"))
 
--- See `:help vim.lsp.start_client` for an overview of the supported `config` options.
-local config = {
-  -- The command that starts the language server
-  -- See: https://github.com/eclipse/eclipse.jdt.ls#running-from-the-command-line
+return {
+
+  filetypes = java_filetypes,
+  root_markers = { ".git", "mvnw", "pom.xml", "build.gradle" },
   cmd = {
     "java",
     "-Declipse.application=org.eclipse.jdt.ls.core.id1",
@@ -38,7 +41,7 @@ local config = {
     "-Declipse.product=org.eclipse.jdt.ls.core.product",
     "-Dlog.protocol=true",
     "-Dlog.level=ALL",
-    "-javaagent:" .. home .. "/.local/share/tvim/mason/share/jdtls/lombok.jar",
+    "-javaagent:" .. home .. "/.local/share/" .. nvim_appname .. "/mason/share/jdtls/lombok.jar",
     "-Xmx4g",
     "--add-modules=ALL-SYSTEM",
     "--add-opens", "java.base/java.util=ALL-UNNAMED",
@@ -46,23 +49,23 @@ local config = {
 
     -- Eclipse jdtls location
     "-jar",
-    home .. "/.local/share/tvim/mason/share/jdtls/plugins/org.eclipse.equinox.launcher.jar",
+    home .. "/.local/share/" .. nvim_appname .. "/mason/share/jdtls/plugins/org.eclipse.equinox.launcher.jar",
     "-configuration",
-    home .. "/.local/share/tvim/mason/packages/jdtls/config_" .. system_os,
+    home .. "/.local/share/" .. nvim_appname .. "/mason/packages/jdtls/config_" .. system_os,
     "-data",
     workspace_dir,
   },
 
-  -- This is the default if not provided, you can remove it. Or adjust as needed.
-  -- One dedicated LSP server & client will be started per unique root_dir
-  root_dir = require("jdtls.setup").find_root({ ".git", "mvnw", "pom.xml", "build.gradle" }),
+  -- on_attach = function(client, bufnr)
+  --   -- vim.print("client: " .. client.client_id .. "bufnr" .. bufnr)
+  --   require("jdtls").setup_dap(require("dap").opts)
+  -- end,
+  --
 
-  -- Here you can configure eclipse.jdt.ls specific settings
-  -- See https://github.com/eclipse/eclipse.jdt.ls/wiki/Running-the-JAVA-LS-server-from-the-command-line#initialize-request
   settings = {
     java = {
       -- TODO(done) Replace this with the absolute path to your main java version (JDTLS requires JDK 21 or higher)
-      home = "${JAVA_HOME}",
+      home = java_home,
       eclipse = {
         downloadSources = true,
       },
@@ -77,7 +80,7 @@ local config = {
           },
           {
             name = "JavaSE-21",
-            path = "${JAVA_HOME}",
+            path = java_home,
           },
         },
       },
@@ -133,24 +136,4 @@ local config = {
       },
     },
   },
-  -- Needed for auto-completion with method signatures and placeholders
-  capabilities = require("cmp_nvim_lsp").default_capabilities(),
-  flags = {
-    allow_incremental_sync = true,
-  },
-  init_options = {
-    -- References the bundles defined above to support Debugging and Unit Testing
-    bundles = bundles,
-    extendedClientCapabilities = jdtls.extendedClientCapabilities,
-  },
 }
-
--- Needed for debugging
-config["on_attach"] = function(client, bufnr)
-  jdtls.setup_dap({ hotcodereplace = "auto" })
-  require("jdtls.dap").setup_dap_main_class_configs()
-end
-
--- This starts a new client & server, or attaches to an existing client & server based on the `root_dir`.
-jdtls.start_or_attach(config)
-

@@ -1,37 +1,44 @@
--- local function get_args(config)
---   local args = type(config.args) == "function" and (config.args() or {}) or config.args or {} --[[@as string[] | string ]]
---   local args_str = type(args) == "table" and table.concat(args, " ") or args --[[@as string]]
---
---   config = vim.deepcopy(config)
---   ---@cast args string[]
---   config.args = function()
---     local new_args = vim.fn.expand(vim.fn.input("Run with args: ", args_str)) --[[@as string]]
---     if config.type and config.type == "java" then
---       ---@diagnostic disable-next-line: return-type-mismatch
---       return new_args
---     end
---     return require("dap.utils").splitstr(new_args)
---   end
---   return config
--- end
-
 return {
   {
     "mfussenegger/nvim-dap",
     recommended = true,
     desc = "Debugging support. Requires language specific adapters to be configured. (see lang extras)",
-
     dependencies = {
       "rcarriga/nvim-dap-ui",
       -- virtual text for the debugger
-      {
-        "theHamsta/nvim-dap-virtual-text",
-        opts = {},
+      "theHamsta/nvim-dap-virtual-text",
+      "nvim-neotest/nvim-nio",
+      "williamboman/mason.nvim",
+    },
+    opts = {
+      configurations =  {
+        java = {
+          type = "java",
+          request = "attach",
+          name = "Debug (Attach) - Remote",
+          hostName = "127.0.0.1",
+          port = 7777,
+        },
+        {
+          type = "lua",
+          request = "attach",
+        },
       },
     },
+    config = function(_, opts)
+      local dap = require("dap")
+      local ui = require("dapui")
+      local vt = require("nvim-dap-virtual-text")
+      dap.setup(opts)
+      ui.setup()
+      vt.setup(opts)
+      -- vim.api.nvim_set_keymap("n", "<leader>da", dap.attach(nil_, opts, {}))
+    end,
+
 
     -- stylua: ignore
     keys = {
+      -- { "<leader>da", function() require("dap").attach( _, _, _) end, desc = "Attach to DAP"},
       { "<leader>dB", function() require("dap").set_breakpoint(vim.fn.input('Breakpoint condition: ')) end, desc = "Breakpoint Condition" },
       { "<leader>db", function() require("dap").toggle_breakpoint() end, desc = "Toggle Breakpoint" },
       { "<leader>dc", function() require("dap").continue() end, desc = "Run/Continue" },
@@ -56,13 +63,11 @@ return {
   -- fancy UI for the debugger
   {
     "rcarriga/nvim-dap-ui",
-    dependencies = { "nvim-neotest/nvim-nio" },
     -- stylua: ignore
     keys = {
       { "<leader>du", function() require("dapui").toggle({ }) end, desc = "Dap UI" },
       { "<leader>de", function() require("dapui").eval() end, desc = "Eval", mode = {"n", "v"} },
     },
-    opts = {},
     config = function(_, opts)
       local dap = require("dap")
       local dapui = require("dapui")
