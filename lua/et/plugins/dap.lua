@@ -9,29 +9,27 @@ return {
       "theHamsta/nvim-dap-virtual-text",
       "nvim-neotest/nvim-nio",
       "williamboman/mason.nvim",
+      "jay-babu/mason-nvim-dap.nvim",
     },
     opts = {
       configurations =  {
         java = {
-          type = "java",
+          type = "server",
           request = "attach",
           name = "Debug (Attach) - Remote",
-          hostName = "127.0.0.1",
-          port = 7777,
+          host = "127.0.0.1",
+          port = 7777
         },
         {
           type = "lua",
-          request = "attach",
-        },
+          request = "attach"
+        }
       },
     },
     config = function(_, opts)
-      local dap = require("dap")
-      local ui = require("dapui")
-      local vt = require("nvim-dap-virtual-text")
-      dap.setup(opts)
-      ui.setup()
-      vt.setup(opts)
+      -- require("dap").setup(opts)
+      require("dapui").setup()
+      require("nvim-dap-virtual-text").setup(opts)
       -- vim.api.nvim_set_keymap("n", "<leader>da", dap.attach(nil_, opts, {}))
     end,
 

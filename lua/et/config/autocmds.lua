@@ -24,6 +24,7 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 
 vim.api.nvim_create_autocmd('LspAttach', {
   callback = function(ev)
+    -- print(string.format('LspAttach event fired: %s', vim.inspect(ev)))
     local client = vim.lsp.get_client_by_id(ev.data.client_id)
     if client == nil then
       return
@@ -36,9 +37,19 @@ vim.api.nvim_create_autocmd('LspAttach', {
 })
 
 vim.api.nvim_create_autocmd('FileType', {
-    pattern = 'java',
-    callback = function(args)
-      local dap = require('dap')
-      require'jdtls'.setup_dap(dap.opts)
-    end
+  pattern = 'java',
+  callback = function(ev)
+    -- print(string.format('FileType event fired: %s', vim.inspect(ev)))
+    local dap = require('dap')
+    require 'jdtls'.setup_dap ({ hotcodereplace = "auto" ,
+      config_overrides = {
+        java = {
+          type = "server",
+          request = "attach",
+          name = "Debug (Attach) - Remote",
+          host = "127.0.0.1",
+          port = 7777
+        }
+      }})
+  end
 })

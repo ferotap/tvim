@@ -27,8 +27,9 @@ local bundles = {
   "/.local/share/" .. nvim_appname .. "/mason/share/java-debug-adapter/com.microsoft.java.debug.plugin.jar"),
 }
 
-vim.list_extend(bundles,
-  vim.split(vim.fn.glob(home .. "/.local/share/" .. nvim_appname .. "/mason/share/java-test/*.jar", true), "\n"))
+-- vim.list_extend(bundles,
+--   vim.split(vim.fn.glob(home ..
+--     "/.local/share/" .. nvim_appname .. "/mason/share/java-test/*.jar", true), "\n"))
 
 return {
 
@@ -61,7 +62,9 @@ return {
   --   require("jdtls").setup_dap(require("dap").opts)
   -- end,
   --
-
+  init_options = {
+    bundles = bundles
+  },
   settings = {
     java = {
       -- TODO(done) Replace this with the absolute path to your main java version (JDTLS requires JDK 21 or higher)
@@ -74,11 +77,12 @@ return {
         -- TODO(done) Update this by adding any runtimes that you need to support your Java projects and removing any that you don't have installed
         -- The runtimes' name parameter needs to match a specific Java execution environments.  See https://github.com/eclipse-jdtls/eclipse.jdt.ls/wiki/Running-the-JAVA-LS-server-from-the-command-line#initialize-request and search "ExecutionEnvironment".
         runtimes = {
+          -- {
+          --   name = "JavaSE-17",
+          --   path = "/opt/kela/java/jdk-17",
+          -- },
           {
-            name = "JavaSE-17",
-            path = "/opt/kela/java/jdk-17",
-          },
-          {
+            default = true,
             name = "JavaSE-21",
             path = java_home,
           },
@@ -89,6 +93,11 @@ return {
       },
       implementationsCodeLens = {
         enabled = true,
+      },
+      inlayHints = {
+        parameterNames = {
+          enabled = "all"
+        }
       },
       referencesCodeLens = {
         enabled = true,
