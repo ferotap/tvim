@@ -46,11 +46,11 @@ return {
           local fzf = require("fzf-lua")
 
           vim.opt_local.omnifunc = "v:lua.vim.lsp.omnifunc"
-          map("gr", function() fzf.lsp_references({}) end, "Goto References")
-          map("gd", function() fzf.lsp_definitions({}) end, "Goto Definition")
-          map("gD", function() fzf.lsp_declarations({}) end, "Declarations")
-          map("gY", function() fzf.lsp_typedefs({}) end, "Type Definitions")
-          map("gi", function() fzf.lsp_implementations({}) end,"Implementations")
+          map("<leader>gr", function() fzf.lsp_references({}) end, "Goto References")
+          map("<leader>gd", function() fzf.lsp_definitions({}) end, "Goto Definition")
+          map("<leader>gD", function() fzf.lsp_declarations({}) end, "Declarations")
+          map("<leader>gY", function() fzf.lsp_typedefs({}) end, "Type Definitions")
+          map("<leader>gi", function() fzf.lsp_implementations({}) end,"Implementations")
           map("<leader>ss", function() fzf.lsp_document_symbols({}) end, "Document Symbols")
           map("<leader>sS", function() fzf.lsp_workspace_symbols({}) end, "Workspace Symbols")
           map("<leader>cs", function() fzf.lsp_live_workspace_symbols({}) end, "Workspace Symbols (live)")

@@ -1,5 +1,5 @@
 return {
-  cmd = {'vscode-json-language-server'},
+  cmd = {'vscode-json-language-server', '--stdio'},
   rootmarkers = {'*.json'},
   filetypes = {'json'},
   settings = {

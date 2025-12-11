@@ -2,7 +2,7 @@ local M = {}
 
 ---@param name string
 function M.get_plugin(name)
-  return require("lacy.core.config").spec.plugins[name]
+  return require("lazy.core.config").spec.plugins[name]
 end
 ---
 ---@param name string

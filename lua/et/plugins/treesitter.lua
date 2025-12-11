@@ -11,7 +11,10 @@ local M = {
 function M.config()
   local configs = require("nvim-treesitter.configs")
   configs.setup({
+    modules = {},
     sync_install = false,
+    auto_install = true,
+    ignore_install = {},
     highlight = { enable = true },
     indent = { enable = true },
     incremental_selection = {
